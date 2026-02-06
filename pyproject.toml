@@ -1,0 +1,89 @@
+[project]
+name = "agentes-uniminuto"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[standard]>=0.120.0",
+    "langchain>=0.3.27",
+    "langchain-community>=0.3.30",
+    "langchain-core==0.3.76",
+    "langchain-google-genai==2.1.12",
+    "langchain-huggingface>=0.3.1",
+    "langchain-openai>=0.3.33",
+    "langchain-text-splitters==0.3.11",
+    "langchain-ollama>=0.3.1",
+    "openai==1.109.1",
+    "psycopg2-binary>=2.9.11",
+    "sqlalchemy>=2.0.44",
+    "uvicorn>=0.37.0",
+]
+
+[dependency-groups]
+dev = [
+]
+
+# Configuración principal de Ruff
+[tool.ruff]
+line-length = 79  # Máximo de caracteres por línea
+target-version = "py310"  # Versión de Python objetivo
+fix = false 
+extend-exclude = [
+    ".venv",  # Excluye el entorno virtual
+    "build",  # Excluye archivos de construcción
+    "dist",  # Excluye distribuciones
+    "*.egg-info",  # Excluye metadatos de paquetes
+    "migrations",  # Excluye migraciones de bases de datos
+]
+
+# Configuración del formateador de código
+[tool.ruff.format]
+quote-style = "double"  # Usa comillas dobles por defecto
+indent-style = "space"  # Usa espacios, no tabulaciones
+docstring-code-format = true  # Formatea también el código dentro de docstrings
+docstring-code-line-length = 72  # Limita las líneas de código dentro de docstrings a 72 caracteres
+
+# Configuración del linter
+[tool.ruff.lint]
+# Conjunto de reglas activadas
+# E/W: errores y advertencias de estilo
+# F: errores detectados por Pyflakes
+# I: orden de imports (isort)
+# UP: actualiza sintaxis antigua (pyupgrade)
+# B: posibles bugs (flake8-bugbear)
+# D: docstrings (pydocstyle)
+# S: seguridad (flake8-bandit)
+# PTH: recomienda usar pathlib en lugar de os.path
+# C90: verifica complejidad de funciones (mccabe)
+select = ["E", "W", "F", "I", "UP", "B", "D", "S", "PTH", "C90"]
+
+# Reglas ignoradas globalmente
+ignore = [
+    "D104",  # Ignora docstring faltante en paquete público
+    "D107",  # Ignora docstring faltante en __init__
+]
+
+# Ignorar reglas por archivo o carpeta
+[tool.ruff.lint.per-file-ignores]
+"app/__init__.py" = ["F401"]  # Ignora imports no usados en __init__.py
+"tests/**" = ["D", "S101"]  # Ignora docstrings y asserts en tests
+"**/prompts.py" = ["E501", "W505"]  # Ignora límites de longitud de línea en archivos de prompts
+
+# Configuración de complejidad ciclomática (mccabe)
+[tool.ruff.lint.mccabe]
+max-complexity = 12  # Límite máximo de complejidad por función
+
+# Configuración del estilo de docstrings
+[tool.ruff.lint.pydocstyle]
+convention = "google"  # Usa el formato de docstrings de Google
+
+# Configuración de longitud de líneas
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 72  # Verifica que docstrings no excedan 72 caracteres
+
+# Configuración del orden de importaciones (isort)
+[tool.ruff.lint.isort]
+#known-first-party = ["app"]  # 'app' es un módulo propio
+combine-as-imports = true  # Une imports con 'as' en una sola línea
+force-sort-within-sections = true  # Ordena incluso dentro de secciones (stdlib, third-party, etc.)
