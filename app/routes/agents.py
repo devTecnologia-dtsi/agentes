@@ -157,7 +157,7 @@ async def agente_notas_endpoint(request: RequestAgentes) -> ResponseAgentes:
 
     return await procesar_solicitud_agente(
         request=request,
-        nombre_agente="notas",
+        nombre_agente="agente-notas",
         agente_disponible=AGENTE_NOTAS_DISPONIBLE,
         funcion_construir_agente=construir_agente_notas,
         funcion_configurar_contexto=set_id_estudiante,

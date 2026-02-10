@@ -1,3 +1,16 @@
+"""
+Servicio de Historial de Chat (PostgreSQL)
+
+Responsabilidad:
+    Actuar como adaptador entre la interfaz de historial de LangChain (BaseChatMessageHistory)
+    y la persistencia en base de datos PostgreSQL de la aplicación.
+    Gestiona la recuperación y almacenamiento de mensajes de chat (Human, AI, System)
+    respetando el modelo de datos definido en app.db.models.
+
+Uso:
+    Este servicio es consumido principalmente por los agentes para mantener el contexto de la conversación.
+"""
+
 from typing import List, Optional
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.messages import (
