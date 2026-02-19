@@ -1,4 +1,5 @@
 from .tools import (
+    calcular_diferencia_horas,
     obtener_datos_horario,
     obtener_info_profesor,
     obtener_tiempo_actual,
@@ -6,6 +7,7 @@ from .tools import (
 )
 
 __all__ = [
+    'calcular_diferencia_horas',
     'obtener_datos_horario',
     'obtener_info_profesor',
     'obtener_tiempo_actual',

@@ -9,7 +9,7 @@ class OrigenService:
 
     def listar_origenes(self):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/origenes", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/origen", timeout=10)
             resp.raise_for_status()
             return resp.json()
         
@@ -18,7 +18,7 @@ class OrigenService:
 
     def obtener_origen(self, id: int):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/origenes/{id}", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/origen/{id}", timeout=10)
             resp.raise_for_status()
             return resp.json()
         
@@ -32,7 +32,7 @@ class OrigenService:
                 "origen": origen
             }
             resp = requests.post(
-                f"{API_PRESUPUESTO}/origenes",
+                f"{API_PRESUPUESTO}/origen",
                 json=payload,
                 timeout=10
             )
@@ -54,7 +54,7 @@ class OrigenService:
                 payload["origen"] = origen
             
             resp = requests.put(
-                f"{API_PRESUPUESTO}/origenes/{id}",
+                f"{API_PRESUPUESTO}/origen/{id}",
                 json=payload,
                 timeout=10
             )
@@ -66,7 +66,7 @@ class OrigenService:
     
     def eliminar_origen(self, id: int):
         try:
-            resp = requests.delete(f"{API_PRESUPUESTO}/origenes/{id}", timeout=10)
+            resp = requests.delete(f"{API_PRESUPUESTO}/origen/{id}", timeout=10)
             resp.raise_for_status()
             return {"message": "Origen eliminado correctamente"}
         

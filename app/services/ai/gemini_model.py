@@ -1,61 +1,62 @@
-"""Inicializador simple de agente Gemini."""
+"""Inicializador de agente Gemini usando LangChain moderno (create_tool_calling_agent)."""
 
-from langchain.agents import AgentType, initialize_agent
+from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.memory import ConversationBufferMemory
-from langchain.prompts import MessagesPlaceholder
+from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from app.core.config import settings
 from app.core.logging import get_logger
 
 logger = get_logger(__name__)
 
-def inicializar_agente_gemini(herramientas, prompt, agent_type=None, **kwargs):
+def inicializar_agente_gemini(herramientas, prompt, **kwargs):
     """Crea un agente Gemini con las herramientas y prompt dados.
 
     Args:
         herramientas: Lista de herramientas de LangChain.
-        prompt: Prompt base para orientar al agente.
-        agent_type: Tipo de agente (default: STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION).
-        **kwargs: Argumentos adicionales para initialize_agent.
+        prompt: Prompt base (system prompt) para orientar al agente.
+        **kwargs: Argumentos adicionales (ignorados por compatibilidad).
 
     Returns:
-        Agente configurado o None si hay error.
+        AgentExecutor configurado con herramientas y memoria automática.
     """
     try:
-        if agent_type is None:
-            agent_type = AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION
-
+        # Crear modelo con configuración explícita
         llm = ChatGoogleGenerativeAI(
-            model="gemini-2.5-flash-lite",
+            model="gemini-2.5-flash",
             temperature=0,
             max_output_tokens=2048,
-            convert_system_message_to_human=True,
             google_api_key=settings.GOOGLE_API_KEY
         )
 
-        # Configurar kwargs del agente para incluir el prompt de sistema y soporte de memoria
-        agent_kwargs = {
-            "system_message": prompt, 
-            "memory_prompts": [MessagesPlaceholder(variable_name="chat_history")],
-            "input_variables": ["input", "agent_scratchpad", "chat_history"]
-        }
-        
-        # Si se pasan kwargs adicionales, mezclarlos
-        if "agent_kwargs" in kwargs:
-            agent_kwargs.update(kwargs.pop("agent_kwargs"))
+        # Crear template de prompt con soporte de historial de conversación
+        prompt_template = ChatPromptTemplate.from_messages([
+            ("system", prompt),
+            ("placeholder", "{chat_history}"),
+            ("human", "{input}"),
+            MessagesPlaceholder(variable_name="agent_scratchpad"),
+        ])
 
-        return initialize_agent(
-            herramientas,
-            llm,
-            agent=agent_type,
-            verbose=True,
-            handle_parsing_errors=True,
-            max_iterations=15,
-            max_execution_time=60,
-            agent_kwargs=agent_kwargs,
-            **kwargs
+        # Crear agente con herramientas (create_tool_calling_agent es moderno y compatible)
+        agent = create_tool_calling_agent(
+            llm=llm,
+            tools=herramientas,
+            prompt=prompt_template
         )
 
+        # Envolver en AgentExecutor para manejo automático de memoria y ejecución
+        agente_executor = AgentExecutor(
+            agent=agent,
+            tools=herramientas,
+            verbose=True,
+            max_iterations=15,  # Gemini puede necesitar más iteraciones
+            max_execution_time=60,
+            handle_parsing_errors=True,
+            return_intermediate_steps=False
+        )
+
+        logger.info("Agente Gemini inicializado correctamente con create_tool_calling_agent")
+        return agente_executor
+
     except Exception as e:
-        logger.error(f"Error al inicializar agente Gemini: {e}")
+        logger.error(f"Error al inicializar agente Gemini: {e}", exc_info=True)
         raise e

@@ -2,21 +2,37 @@ from app.services.ai import instanciar_agente
 from .prompts import SYSTEM_PROMPT
 
 from .tools import (
-    consultar_notas,
+    nota_parcial_materia,
+    nota_examen_materia,
+    fechas_materia,
     consultar_cursos,
     consultar_informacion_estudiante,
     consultar_creditos,
-    consultar_materias_por_estado,
-    consultar_historial
+    materias_cursadas,
+    materias_pendientes,
+    materias_perdidas,
+    creditos_materia,
+    nota_materia,
+    semestre_materia,
+    veces_cursada_materia,
+    promedio_estudiante
     )
 
 herramientas = [
-    consultar_notas,
+    nota_parcial_materia,
+    nota_examen_materia,
+    fechas_materia,
     consultar_cursos,
     consultar_informacion_estudiante,
     consultar_creditos,
-    consultar_materias_por_estado,
-    consultar_historial
+    materias_cursadas,
+    materias_pendientes,
+    materias_perdidas,
+    creditos_materia,
+    nota_materia,
+    semestre_materia,
+    veces_cursada_materia,
+    promedio_estudiante
 ]
  
  

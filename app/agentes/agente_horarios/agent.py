@@ -8,6 +8,7 @@ No hardcodea ningún modelo.
 from app.services.ai import instanciar_agente
 from .prompts import PROMPT_HORARIO
 from .tools import (
+    calcular_diferencia_horas,
     obtener_datos_horario,
     obtener_info_profesor,
     obtener_tiempo_actual,
@@ -17,6 +18,7 @@ from .tools import (
 herramientas = [
     obtener_datos_horario,
     obtener_tiempo_actual,
+    calcular_diferencia_horas,
     obtener_info_profesor,
 ]
 

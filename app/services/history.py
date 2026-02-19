@@ -33,7 +33,7 @@ class PostgresTurnBasedHistory(BaseChatMessageHistory):
         session_id: str,
         student_id: Optional[str] = None,
         email_usuario: Optional[str] = None,
-        messages_limit: int = 10, # Límite de mensajes a recuperar
+        messages_limit: int = 5, # Límite de mensajes a recuperar
     ):
         self.session_id = session_id
         self.student_id = student_id

@@ -9,7 +9,7 @@ class ResponsableService:
 
     def listar_responsables(self):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/responsables", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/responsable", timeout=10)
             resp.raise_for_status()
             return resp.json()
         
@@ -18,7 +18,7 @@ class ResponsableService:
 
     def obtener_responsable(self, id: int):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/responsables/{id}", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/responsable/{id}", timeout=10)
             resp.raise_for_status()
             return resp.json()
         
@@ -35,7 +35,7 @@ class ResponsableService:
             }
 
             resp = requests.post(
-                f"{API_PRESUPUESTO}/responsables",
+                f"{API_PRESUPUESTO}/responsable",
                 json=payload,
                 timeout=10
             )
@@ -64,7 +64,7 @@ class ResponsableService:
 
 
             resp = requests.put(
-                f"{API_PRESUPUESTO}/responsables/{id}",
+                f"{API_PRESUPUESTO}/responsable/{id}",
                 json=payload,
                 timeout=10
             )
@@ -76,7 +76,7 @@ class ResponsableService:
         
     def eliminar_responsable(self, id: int):
         try:
-            resp = requests.delete(f"{API_PRESUPUESTO}/responsables/{id}", timeout=10)
+            resp = requests.delete(f"{API_PRESUPUESTO}/responsable/{id}", timeout=10)
             resp.raise_for_status()
             return {"success": True, "message": "Responsable eliminado correctamente."}
         

@@ -11,7 +11,7 @@ class OrdenService:
 
     def listar_ordenes(self):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/ordenes", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/orden", timeout=10)
             resp.raise_for_status()
             return resp.json()
         
@@ -20,7 +20,7 @@ class OrdenService:
 
     def obtener_orden(self, id: int):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/ordenes/{id}", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/orden/{id}", timeout=10)
             resp.raise_for_status()
             return resp.json()
         
@@ -38,7 +38,7 @@ class OrdenService:
                 "id_proveedor": id_proveedor
             }
             resp = requests.post(
-                f"{API_PRESUPUESTO}/ordenes",
+                f"{API_PRESUPUESTO}/orden",
                 json=payload,
                 timeout=10
             )
@@ -72,7 +72,7 @@ class OrdenService:
                 payload["id_proveedor"] = id_proveedor
 
             resp = requests.put(
-                f"{API_PRESUPUESTO}/ordenes/{id}",
+                f"{API_PRESUPUESTO}/orden/{id}",
                 json=payload,
                 timeout=10
             )
@@ -84,7 +84,7 @@ class OrdenService:
         
     def eliminar_orden(self, id: int):
         try:
-            resp = requests.delete(f"{API_PRESUPUESTO}/ordenes/{id}", timeout=10)
+            resp = requests.delete(f"{API_PRESUPUESTO}/orden/{id}", timeout=10)
             resp.raise_for_status()
             return {"message": "Negociación eliminada correctamente"}
         

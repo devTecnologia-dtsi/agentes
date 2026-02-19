@@ -1,61 +1,64 @@
-"""Inicializador simple de agente OpenAI."""
+"""Inicializador de agente OpenAI usando LangChain moderno (create_tool_calling_agent)."""
 
-from langchain.agents import AgentType, initialize_agent
+from langchain.agents import create_tool_calling_agent, AgentExecutor
 from langchain_openai import ChatOpenAI
-from langchain.prompts import MessagesPlaceholder
+from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
 from app.core.config import settings
 from app.core.logging import get_logger
 
 logger = get_logger(__name__)
 
 
-def inicializar_agente_openai(herramientas, prompt, agent_type=None, **kwargs):
+def inicializar_agente_openai(herramientas, prompt, **kwargs):
     """Crea un agente OpenAI con las herramientas y prompt dados.
 
     Args:
         herramientas: Lista de herramientas de LangChain.
-        prompt: Prompt base para orientar al agente.
-        agent_type: Tipo de agente (default: STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION).
-        **kwargs: Argumentos adicionales para initialize_agent.
+        prompt: Prompt base (system prompt) para orientar al agente.
+        **kwargs: Argumentos adicionales (ignorados por compatibilidad).
 
     Returns:
-        Agente configurado o None si hay error.
+        AgentExecutor configurado con herramientas y memoria automática.
     """
     try:
-        if agent_type is None:
-            agent_type = AgentType.STRUCTURED_CHAT_ZERO_SHOT_REACT_DESCRIPTION
-        
+        # Crear modelo con configuración explícita
         llm = ChatOpenAI(
             model="gpt-4o-mini",
             temperature=0,
             max_tokens=2048,
-            api_key=settings.OPENAI_API_KEY
+            api_key=settings.OPENAI_API_KEY,
+            timeout=60
         )
 
-        # Configurar kwargs del agente para incluir el prompt de sistema y soporte de memoria
-        agent_kwargs = {
-            "prefix": prompt, # En Structured Chat, 'prefix' suele ser donde va el System Prompt
-            "memory_prompts": [MessagesPlaceholder(variable_name="chat_history")],
-            "input_variables": ["input", "agent_scratchpad", "chat_history"]
-        }
-        
-        # Si se pasan kwargs adicionales, mezclarlos
-        if "agent_kwargs" in kwargs:
-            agent_kwargs.update(kwargs.pop("agent_kwargs"))
+        # Crear template de prompt con soporte de historial de conversación
+        prompt_template = ChatPromptTemplate.from_messages([
+            ("system", prompt),
+            ("placeholder", "{chat_history}"),
+            ("human", "{input}"),
+            MessagesPlaceholder(variable_name="agent_scratchpad"),
+        ])
 
-        return initialize_agent(
-            herramientas,
-            llm,
-            agent=agent_type,
+        # Crear agente con herramientas (create_tool_calling_agent es moderno y mantiene referencias a herramientas)
+        agent = create_tool_calling_agent(
+            llm=llm,
+            tools=herramientas,
+            prompt=prompt_template
+        )
+
+        # Envolver en AgentExecutor para manejo automático de memoria y ejecución
+        agente_executor = AgentExecutor(
+            agent=agent,
+            tools=herramientas,
             verbose=True,
-            handle_parsing_errors=True,
             max_iterations=5,
             max_execution_time=60,
-            early_stopping_method="force",
-            agent_kwargs=agent_kwargs,
-            **kwargs
+            handle_parsing_errors=True,
+            return_intermediate_steps=False
         )
 
+        logger.info("Agente OpenAI inicializado correctamente con create_tool_calling_agent")
+        return agente_executor
+
     except Exception as e:
-        logger.error(f"Error al inicializar agente OpenAI: {e}")
+        logger.error(f"Error al inicializar agente OpenAI: {e}", exc_info=True)
         raise e

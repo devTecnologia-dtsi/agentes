@@ -1,8 +1,20 @@
 import requests
+from datetime import datetime
+import unicodedata
 from .config import get_base_url, get_headers
 
 class CursosService:
 
+    def _normalizar_texto(self, texto: str) -> str:
+        if not texto:
+            return ""
+
+        texto = texto.strip().lower()
+        texto = unicodedata.normalize("NFD", texto)
+        texto = texto.encode("ascii", "ignore").decode("utf-8")
+
+        return " ".join(texto.split())
+    
     def fetch_cursos(self, id_estudiante: str):
         """
         Llama a la API de cursos actuales del estudiante.
@@ -26,13 +38,7 @@ class CursosService:
                     "message": f"No se pudo obtener la información del estudiante. URL: {resp.url} Status: {resp.status_code}, Response: {resp.text}"
                 }
 
-            try:
-                data = resp.json()
-            except ValueError:
-                return {
-                    "error": True,
-                    "message": "Respuesta inválida de la API de cursos."
-                }
+            data = resp.json()
 
             return {
                 "error": False,
@@ -40,8 +46,11 @@ class CursosService:
                 "cursos": data.get("cursos", [])
             }
 
-        except Exception as e:
-            return {"error": True, "message": f"Error interno: {e}"}
+        except requests.RequestException as e:
+            return {
+                "error": True,
+                "message": f"Error en solicitud HTTP: {str(e)}"
+            }
 
 
     def obtener_cursos(self, id_estudiante: str):
@@ -58,17 +67,21 @@ class CursosService:
         cursos_limpios = []
 
         for c in cursos_raw:
+            nombre = c.get("nombre")
+
             cursos_limpios.append({
                 "codigo": c.get("codigo"),
                 "materia": c.get("nombre"),
-                "codigoMateria": c.get("codigoMateria"),
-                "inicio": c.get("inicio"),
-                "final": c.get("final"),
-                "periodo": c.get("periodo"),
-                "descripcion": c.get("descripcion"),
+                "materia_normalizada": self._normalizar_texto(nombre),
+                "inicio": c.get("inicio"),     
+                "fin": c.get("final"), 
+                "periodo": c.get("periodo")
             })
 
-        return cursos_limpios
+        return {
+            "error": False,
+            "cursos": cursos_limpios
+        }
 
     def obtener_informacion_estudiante(self, id_estudiante: str):
         """
@@ -90,3 +103,54 @@ class CursosService:
             "modalidad": info.get("Modalidad", {}).get("nombre"),
             "periodo": info.get("Periodo", {}).get("nombre"),
         }
+    
+    
+    def formatear_fecha_es(self, fecha_str: str):
+        try:
+            fecha = datetime.strptime(fecha_str, "%d-%b-%y")
+
+            dias_es = {
+                "Monday": "lunes",
+                "Tuesday": "martes",
+                "Wednesday": "miércoles",
+                "Thursday": "jueves",
+                "Friday": "viernes",
+                "Saturday": "sábado",
+                "Sunday": "domingo",
+            }
+
+            meses_es = {
+                1: "enero", 2: "febrero", 3: "marzo",
+                4: "abril", 5: "mayo", 6: "junio",
+                7: "julio", 8: "agosto", 9: "septiembre",
+                10: "octubre", 11: "noviembre", 12: "diciembre",
+            }
+
+            dia_semana = dias_es.get(fecha.strftime("%A"), "")
+            mes = meses_es.get(fecha.month, "")
+
+            return f"{dia_semana} {fecha.day} de {mes} de {fecha.year}"
+
+        except Exception:
+            return fecha_str
+
+    def calcular_contexto_fecha(self, fecha_str: str):
+        try:
+            fecha = datetime.strptime(fecha_str, "%d-%b-%y")
+            hoy = datetime.now()
+
+            diferencia = (fecha.date() - hoy.date()).days
+
+            if diferencia == 0:
+                return "es hoy"
+            elif diferencia == 1:
+                return "es mañana"
+            elif diferencia > 1:
+                return f"es en {diferencia} días"
+            elif diferencia == -1:
+                return "fue ayer"
+            else:
+                return f"fue hace {abs(diferencia)} días"
+
+        except Exception:
+            return ""

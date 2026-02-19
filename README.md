@@ -125,7 +125,6 @@ Endpoints para consultar información del estudiante.
 | `API_CUMPLIMIENTO` |Consultar el cumplimiento de créditos|`https://uniminuto.api.digibee.io/pipeline/uniminuto/v1/servicios-banner-dos/cumplimientoCursos`|`ITnjVcrLWfYpY2B246EcrWO6Hln3LD7a`|
 | `API_CALIFICACIONES` | Notas actuales del estudiante |`https://uniminuto.api.digibee.io/pipeline/uniminuto/v1/servicios-banner/calificacionActual`|`ITnjVcrLWfYpY2B246EcrWO6Hln3LD7a`|
 
-
 #### 📚 Aulas Virtuales (Moodle)
 
 | Variable | Descripción | Variable | apiKey |
@@ -139,11 +138,13 @@ Endpoints para consultar información del estudiante.
 |----------|-------------| ---------- |---------- |
 | `API_PRESUPUESTO` | Gestión de presupuesto (CRUD) |`http://localhost:9000/api`|N/A|
 
+
 #### 🗄️ Base de Datos (Opcional)
 
 | Variable | Descripción | Variable |
 |----------|-------------|---------|
 | `POSTGRES_CONNECTION_STRING` | URI de conexión a PostgreSQL | `postgresql://postgres:admin@localhost:5433/agentes_db`|
+| `AUTO_INIT_DB` | Ejecuta `init_db()` al iniciar para crear tablas faltantes | `true`|
 
 #### 📝 Ejemplo de archivo .env
 
@@ -168,6 +169,7 @@ apikey=ITnjVcrLWfYpY2B246EcrWO6Hln3LD7a
 
 # Base de Datos
 POSTGRES_CONNECTION_STRING=postgresql://postgres:admin@localhost:5433/agentes_db
+AUTO_INIT_DB=true
 ```
 
 ---

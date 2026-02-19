@@ -13,7 +13,7 @@ class ContratoService:
     def listar_Contratos(self):
         try:
             resp = requests.get(
-                f"{API_PRESUPUESTO}/contratos",
+                f"{API_PRESUPUESTO}/contrato",
                 timeout=10
             )
             resp.raise_for_status()
@@ -24,7 +24,7 @@ class ContratoService:
     def obtener_Contrato(self, id: int):
         try:
             resp = requests.get(
-                f"{API_PRESUPUESTO}/contratos/{id}",
+                f"{API_PRESUPUESTO}/contrato/{id}",
                 timeout=10
             )
             resp.raise_for_status()
@@ -44,7 +44,7 @@ class ContratoService:
             }
 
             resp = requests.post(
-                f"{API_PRESUPUESTO}/contratos",
+                f"{API_PRESUPUESTO}/contrato",
                 json=payload,
                 timeout=10
             )
@@ -84,7 +84,7 @@ class ContratoService:
                 }
 
             resp = requests.put(
-                f"{API_PRESUPUESTO}/contratos/{id}",
+                f"{API_PRESUPUESTO}/contrato/{id}",
                 json=payload,
                 timeout=10
             )
@@ -97,7 +97,7 @@ class ContratoService:
     def eliminar_Contrato(self, id: int):
         try:
             resp = requests.delete(
-                f"{API_PRESUPUESTO}/contratos/{id}",
+                f"{API_PRESUPUESTO}/contrato/{id}",
                 timeout=10
             )
             resp.raise_for_status()

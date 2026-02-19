@@ -31,6 +31,20 @@ def get_historial_url() -> str:
         raise ValueError("La variable API_HISTORIAL no está configurada.")
     return settings.API_HISTORIAL
 
+def get_promedio_url() -> str:
+    """
+    Obtiene la URL de la API de promedio desde la configuración global.
+
+    Returns:
+        str: La URL configurada (API_PROMEDIO).
+
+    Raises:
+        ValueError: Si la URL no está configurada.
+    """
+    if not settings.API_PROMEDIO:
+        raise ValueError("La variable API_PROMEDIO no está configurada.")
+    return settings.API_PROMEDIO
+
 def get_headers() -> Dict[str, str]:
     """
     Retorna los headers para las peticiones a la API de Notas.

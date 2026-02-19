@@ -79,6 +79,7 @@ def validar_y_obtener_prompt(prompt_entrada: str) -> str:
         )
     return prompt_validado
 
+
 # =================================================================================================
 # Funciones Helpers para procesar_solicitud_agente
 # =================================================================================================
@@ -112,7 +113,7 @@ def validar_y_obtener_id_usuario(id_usuario: str | None) -> str:
 def registrar_llamada_agente(nombre: str, usuario_id: str, rol: str, modelo: str, prompt: str):
     """Registra en logs la llamada al agente."""
     logger.info(f"Solicitud a {nombre} | Usuario: {usuario_id} | Rol: {rol} | Modelo: {modelo}")
-    logger.debug(f"Prompt: {prompt}")
+    logger.info(f"Prompt: {prompt}")
 
 def ejecutar_construccion_agente(funcion_construir: Callable, modelo: str) -> Any:
     """Ejecuta la función factory del agente y maneja errores de inicialización."""
@@ -257,14 +258,21 @@ async def procesar_solicitud_agente(
         # Nota: El historial siempre intenta usar ambos IDs si están disponibles
         history = inicializar_historial(request.uuid, request.id_usuario, request.email_usuario)
         
-        # 9. Invocar agente
-        respuesta_agente = await agente.ainvoke({"input": prompt_validado, "chat_history": history.messages})
+        # 9. Invocar agente con historial como contexto
+        # El AgentExecutor maneja automáticamente la memoria y el ReAct loop
+        respuesta_agente = await agente.ainvoke({
+            "input": prompt_validado,
+            "chat_history": history.messages  # Historial recuperado de BD
+        })
         
-        # 10. Guardar historial
+        # 10. Extraer respuesta del agente
+        respuesta_contenido = respuesta_agente.get("output", "Sin respuesta")
+        
+        # 11. Guardar historial
         guardar_interaccion_historial(
             history, 
             prompt_validado, 
-            respuesta_agente["output"], 
+            respuesta_contenido, 
             system_prompt=system_prompt,
             agent_name=nombre_agente
         )

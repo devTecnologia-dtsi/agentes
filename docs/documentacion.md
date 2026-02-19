@@ -295,7 +295,6 @@ A continuación se presenta la estructura completa de archivos y directorios del
 │   │   ├── agente_notas/
 │   │   └── agente_presupuesto/
 │   ├── core/                  # Configuración y lógica central
-│   │   ├── agents_loader.py   # Loader de agentes (Core)
 │   │   ├── config.py          # Configuración global
 │   │   └── logging.py         # Configuración de logs
 │   ├── db/                    # Capa de base de datos

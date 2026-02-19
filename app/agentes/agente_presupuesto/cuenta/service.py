@@ -9,7 +9,7 @@ class CuentaService:
 
     def listar_cuentas(self):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/cuentas", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/cuenta", timeout=10)
             resp.raise_for_status()
             return resp.json()
         
@@ -18,7 +18,7 @@ class CuentaService:
 
     def obtener_cuenta(self, id: int):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/cuentas/{id}", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/cuenta/{id}", timeout=10)
             resp.raise_for_status()
             return resp.json()
         
@@ -35,7 +35,7 @@ class CuentaService:
                 "id_componente": id_componente
             }
             resp = requests.post(
-                f"{API_PRESUPUESTO}/cuentas",
+                f"{API_PRESUPUESTO}/cuenta",
                 json=payload,
                 timeout=10
             )
@@ -66,7 +66,7 @@ class CuentaService:
                 payload["id_componente"] = id_componente
 
             resp = requests.put(
-                f"{API_PRESUPUESTO}/cuentas/{id}",
+                f"{API_PRESUPUESTO}/cuenta/{id}",
                 json=payload,
                 timeout=10
             )
@@ -78,7 +78,7 @@ class CuentaService:
     def eliminar_cuenta(self, id: int):
         try:
             resp = requests.delete(
-                f"{API_PRESUPUESTO}/cuentas/{id}",
+                f"{API_PRESUPUESTO}/cuenta/{id}",
                 timeout=10
             )
             resp.raise_for_status()

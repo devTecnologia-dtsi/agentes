@@ -7,11 +7,11 @@ service = CreditosService()
 @tool
 def consultar_creditos():
     """
-    Consulta el resumen de créditos académicos del estudiante.
-    Devuelve:
+    Consulta el resumen de créditos académicos del estudiante, 
+    Devuelve el total de:
     - créditos aprobados
     - créditos perdidos
-    - créditos pendientes
+    - creditos pendientes
     """
     id_final = get_id_estudiante()
 
@@ -24,19 +24,65 @@ def consultar_creditos():
     return service.obtener_resumen_creditos(id_final)
 
 @tool
-def consultar_materias_por_estado():
+def materias_perdidas():
     """
-    Consulta el detalle de materias del estudiante:
-    - cursadas
-    - perdidas
-    - pendientes
+    Devuelve las materias perdidas del estudiante.
+    Retorna: nombre, créditos, nota y periodo.
     """
     id_final = get_id_estudiante()
-
     if not id_final:
-        return {
-            "error": True,
-            "message": "No se identificó al estudiante en el contexto."
-        }
+        return {"error": True, "message": "No se identificó al estudiante."}
 
-    return service.obtener_detalle_materias(id_final)
+    data = service.obtener_materias_por_estado(id_final)
+
+    if data.get("error"):
+        return data
+
+    return {"perdidas": data["perdidas"]}
+
+@tool
+def materias_pendientes():
+    """
+    Devuelve las materias pendientes del estudiante.
+    Retorna solo el nombre de la materia.
+    """
+    id_final = get_id_estudiante()
+    if not id_final:
+        return {"error": True, "message": "No se identificó al estudiante."}
+
+    data = service.obtener_materias_por_estado(id_final)
+
+    if data.get("error"):
+        return data
+
+    return {"pendientes": data["pendientes"]}
+
+
+@tool
+def materias_cursadas():
+    """
+    Devuelve las materias cursadas/aprobadas.
+    Retorna: nombre, créditos y semestre terminado.
+    """
+    id_final = get_id_estudiante()
+    if not id_final:
+        return {"error": True, "message": "No se identificó al estudiante."}
+
+    data = service.obtener_materias_por_estado(id_final)
+
+    if data.get("error"):
+        return data
+
+    return {"cursadas": data["cursadas"]}
+
+
+@tool
+def creditos_materia(materia: str):
+    """
+    Devuelve cuántos créditos tiene una materia específica.
+    """
+    id_final = get_id_estudiante()
+    if not id_final:
+        return {"error": True, "message": "No se identificó al estudiante."}
+
+    return service.buscar_creditos_materia(id_final, materia)

@@ -32,6 +32,7 @@ class Settings(BaseSettings):
     
     # Base de Datos
     POSTGRES_CONNECTION_STRING: str | None = None
+    AUTO_INIT_DB: bool = True
     
     # Logging
     LOG_LEVEL: str = "INFO"
@@ -56,6 +57,7 @@ class Settings(BaseSettings):
     API_CREDITOS: str | None = None
     API_CURSOS_CALIFICACIONES: str | None = None
     API_NOTAS: str | None = None
+    API_PROMEDIO: str | None = None
     
     #Agente de Presupuesto
     API_PRESUPUESTO: str | None = None

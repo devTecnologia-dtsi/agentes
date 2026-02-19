@@ -9,7 +9,7 @@ class ClaseService:
 
     def listar_clases(self):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/clases", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/clase", timeout=10)
             resp.raise_for_status()
             return resp.json()
         except requests.RequestException as e:
@@ -17,7 +17,7 @@ class ClaseService:
 
     def obtener_clase(self, id: int):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/clases/{id}", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/clase/{id}", timeout=10)
             resp.raise_for_status()
             return resp.json()
         except requests.RequestException as e:
@@ -30,7 +30,7 @@ class ClaseService:
                 "clase": clase
             }
             resp = requests.post(
-                f"{API_PRESUPUESTO}/clases",
+                f"{API_PRESUPUESTO}/clase",
                 json=payload,
                 timeout=10
             )
@@ -51,7 +51,7 @@ class ClaseService:
                 payload["clase"] = clase
 
             resp = requests.put(
-                f"{API_PRESUPUESTO}/clases/{id}",
+                f"{API_PRESUPUESTO}/clase/{id}",
                 json=payload,
                 timeout=10
             )
@@ -65,7 +65,7 @@ class ClaseService:
     def eliminar_clase(self, id: int):
         try:
             resp = requests.delete(
-                f"{API_PRESUPUESTO}/clases/{id}",
+                f"{API_PRESUPUESTO}/clase/{id}",
                 timeout=10
             )
             resp.raise_for_status()

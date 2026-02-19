@@ -1,0 +1,37 @@
+name: agentes-uniminuto # Define el nombre del proyecto para organizar los contenedores y redes.
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: agentes_uniminuto_postgres
+
+    environment:
+      POSTGRES_DB: agentes_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+    restart: "no"
+
+    networks:
+      - agentes-network
+
+networks:
+  agentes-network:
+    name: agentes-uniminuto-network
+    driver: bridge
+
+volumes:
+  postgres_data:
+    name: agentes-uniminuto_postgres_data

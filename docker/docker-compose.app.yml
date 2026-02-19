@@ -1,0 +1,37 @@
+name: agentes-uniminuto # Define el nombre del proyecto para organizar los contenedores y redes.
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: agentes_uniminuto_app
+    env_file:
+      - ../.env
+    
+    environment:
+      # Server
+      SERVER_HOST: 0.0.0.0
+      SERVER_PORT: 8000
+      
+      # CORS
+      CORS_ORIGINS: '["*"]'
+      CORS_CREDENTIALS: "true"
+      CORS_METHODS: '["*"]'
+      CORS_HEADERS: '["*"]'
+
+    ports:
+      - "8001:8000"
+
+    volumes:
+      - ../logs:/app/logs
+
+    networks:
+      - agentes-network
+
+    restart: unless-stopped
+
+networks:
+  agentes-network:
+    external: true
+    name: agentes-uniminuto-network

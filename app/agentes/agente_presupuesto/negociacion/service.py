@@ -10,7 +10,7 @@ class NegociacionService:
 
     def listar_negociaciones(self):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/negociaciones", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/negociacion", timeout=10)
             resp.raise_for_status()
             return resp.json()
         
@@ -19,7 +19,7 @@ class NegociacionService:
 
     def obtener_negociacion(self, id: int):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/negociaciones/{id}", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/negociacion/{id}", timeout=10)
             resp.raise_for_status()
             return resp.json()
         
@@ -34,7 +34,7 @@ class NegociacionService:
                 "id_contrato": id_contrato
             }
             resp = requests.post(
-                f"{API_PRESUPUESTO}/negociaciones",
+                f"{API_PRESUPUESTO}/negociacion",
                 json=payload,
                 timeout=10
             )
@@ -59,7 +59,7 @@ class NegociacionService:
                 payload["id_contrato"] = id_contrato
 
             resp = requests.put(
-                f"{API_PRESUPUESTO}/negociaciones/{id}",
+                f"{API_PRESUPUESTO}/negociacion/{id}",
                 json=payload,
                 timeout=10
             )
@@ -72,7 +72,7 @@ class NegociacionService:
     
     def eliminar_negociacion(self, id: int):
         try:
-            resp = requests.delete(f"{API_PRESUPUESTO}/negociaciones/{id}", timeout=10)
+            resp = requests.delete(f"{API_PRESUPUESTO}/negociacion/{id}", timeout=10)
             resp.raise_for_status()
             return resp.json()
         

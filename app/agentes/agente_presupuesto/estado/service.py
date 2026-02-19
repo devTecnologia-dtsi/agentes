@@ -9,7 +9,7 @@ class EstadoService:
 
     def listar_estados(self):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/estados", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/estado", timeout=10)
             resp.raise_for_status()
             return resp.json()
         
@@ -18,7 +18,7 @@ class EstadoService:
 
     def obtener_estado(self, id: int):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/estados/{id}", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/estado/{id}", timeout=10)
             resp.raise_for_status()
             return resp.json()
         
@@ -32,7 +32,7 @@ class EstadoService:
                 "estado": estado
             }
             resp = requests.post(
-                f"{API_PRESUPUESTO}/estados",
+                f"{API_PRESUPUESTO}/estado",
                 json=payload,
                 timeout=10
             )
@@ -54,7 +54,7 @@ class EstadoService:
                 payload["estado"] = estado
 
             resp = requests.put(
-                f"{API_PRESUPUESTO}/estados/{id}",
+                f"{API_PRESUPUESTO}/estado/{id}",
                 json=payload,
                 timeout=10
             )
@@ -66,7 +66,7 @@ class EstadoService:
     
     def eliminar_estado(self, id: int):
         try:
-            resp = requests.delete(f"{API_PRESUPUESTO}/estados/{id}", timeout=10)
+            resp = requests.delete(f"{API_PRESUPUESTO}/estado/{id}", timeout=10)
             resp.raise_for_status()
             return {"message": "Estado eliminado correctamente"}
         

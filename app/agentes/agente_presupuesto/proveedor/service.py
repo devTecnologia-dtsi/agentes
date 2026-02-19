@@ -9,7 +9,7 @@ class ProveedorService:
 
     def listar_proveedores(self):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/proveedores", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/proveedor", timeout=10)
             resp.raise_for_status()
             return resp.json()
         
@@ -18,7 +18,7 @@ class ProveedorService:
 
     def obtener_proveedor(self, id: int):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/proveedores/{id}", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/proveedor/{id}", timeout=10)
             resp.raise_for_status()
             return resp.json()
         
@@ -32,7 +32,7 @@ class ProveedorService:
             }
 
             resp = requests.post(
-                f"{API_PRESUPUESTO}/proveedores",
+                f"{API_PRESUPUESTO}/proveedor",
                 json=payload,
                 timeout=10
             )
@@ -51,7 +51,7 @@ class ProveedorService:
                 payload["nombre"] = nombre
 
             resp = requests.put(
-                f"{API_PRESUPUESTO}/proveedores/{id}",
+                f"{API_PRESUPUESTO}/proveedor/{id}",
                 json=payload,
                 timeout=10
             )
@@ -63,7 +63,7 @@ class ProveedorService:
     
     def eliminar_proveedor(self, id: int):
         try:
-            resp = requests.delete(f"{API_PRESUPUESTO}/proveedores/{id}", timeout=10)
+            resp = requests.delete(f"{API_PRESUPUESTO}/proveedor/{id}", timeout=10)
             resp.raise_for_status()
             return {"message": "Proveedor eliminado correctamente"}
         

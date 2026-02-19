@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import uvicorn
+import os
 from app.core.config import settings
 from app.routes import agents, info, openai_api
 
@@ -13,7 +14,8 @@ from app.db.connection import SessionLocal, init_db
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Maneja el ciclo de vida de la aplicación (inicio y cierre)."""
-    # init_db() #Crea automáticamente las tablas en la base de datos si estas no existen
+    if settings.AUTO_INIT_DB:
+        init_db()  # Crea automáticamente las tablas si no existen
     yield
     # Lógica de cierre (si es necesaria)
 

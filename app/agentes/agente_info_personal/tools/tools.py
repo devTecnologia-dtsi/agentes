@@ -23,11 +23,8 @@ def set_usuario_id_info(usuario_id: str) -> None:
 async def obtener_datos_info_personal() -> str:
     """Consulta los datos personales del usuario bajo demanda."""
 
+    # id_usuario validado en el endpoint; el contexto se configura antes de invocar al agente
     usuario_id = _usuario_id_ctx.get()
-    if usuario_id is None:
-        logger.warning("No hay ID de usuario en el contexto")
-        return "Error: No se ha establecido el ID del usuario."
-
     datos = await cargar_datos_info_personal(usuario_id)
     if datos is None:
         return "Error al consultar servicio de información personal."

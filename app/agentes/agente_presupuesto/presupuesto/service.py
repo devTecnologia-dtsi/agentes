@@ -10,7 +10,7 @@ class PresupuestoService:
 
     def listar_presupuestos(self):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/presupuestos", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/presupuesto", timeout=10)
             resp.raise_for_status()
             return resp.json()
         
@@ -19,7 +19,7 @@ class PresupuestoService:
 
     def obtener_presupuesto(self, id: int):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/presupuestos/{id}", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/presupuesto/{id}", timeout=10)
             resp.raise_for_status()
             return resp.json()
         
@@ -36,7 +36,7 @@ class PresupuestoService:
                 "id_cuenta": id_cuenta
             }
             resp = requests.post(
-                f"{API_PRESUPUESTO}/presupuestos",
+                f"{API_PRESUPUESTO}/presupuesto",
                 json=payload,
                 timeout=10
             )
@@ -67,7 +67,7 @@ class PresupuestoService:
                 payload["id_cuenta"] = id_cuenta
 
             resp = requests.put(
-                f"{API_PRESUPUESTO}/presupuestos/{id}",
+                f"{API_PRESUPUESTO}/presupuesto/{id}",
                 json=payload,
                 timeout=10
             )
@@ -79,7 +79,7 @@ class PresupuestoService:
         
     def eliminar_presupuesto(self, id: int):
         try:
-            resp = requests.delete(f"{API_PRESUPUESTO}/presupuestos/{id}", timeout=10)
+            resp = requests.delete(f"{API_PRESUPUESTO}/presupuesto/{id}", timeout=10)
             resp.raise_for_status()
             return {"message": "Presupuesto eliminado correctamente"}
         

@@ -9,7 +9,7 @@ class TipoService:
 
     def listar_tipos(self):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/tipos", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/tipo", timeout=10)
             resp.raise_for_status()
             return resp.json()
         except requests.RequestException as e:
@@ -17,7 +17,7 @@ class TipoService:
 
     def obtener_tipo(self, id: int):
         try:
-            resp = requests.get(f"{API_PRESUPUESTO}/tipos/{id}", timeout=10)
+            resp = requests.get(f"{API_PRESUPUESTO}/tipo/{id}", timeout=10)
             resp.raise_for_status()
             return resp.json()
         except requests.RequestException as e:
@@ -30,7 +30,7 @@ class TipoService:
                 "tipo": tipo
             }
             resp = requests.post(
-                f"{API_PRESUPUESTO}/tipos",
+                f"{API_PRESUPUESTO}/tipo",
                 json=payload,
                 timeout=10
             )
@@ -51,7 +51,7 @@ class TipoService:
                 payload["tipo"] = tipo
 
             resp = requests.put(
-                f"{API_PRESUPUESTO}/tipos/{id}",
+                f"{API_PRESUPUESTO}/tipo/{id}",
                 json=payload,
                 timeout=10
             )
@@ -65,7 +65,7 @@ class TipoService:
     def eliminar_tipo(self, id: int):
         try:
             resp = requests.delete(
-                f"{API_PRESUPUESTO}/tipos/{id}",
+                f"{API_PRESUPUESTO}/tipo/{id}",
                 timeout=10
             )
             resp.raise_for_status()

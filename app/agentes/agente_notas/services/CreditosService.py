@@ -1,12 +1,18 @@
 import requests
 from .CursosService import CursosService
 from .config import get_base_url, get_headers
-
+import unicodedata
 class CreditosService:
     """
     Servicio encargado de consultar y procesar
     el cumplimiento académico y créditos del estudiante.
     """
+
+    def normalizar_texto(self, texto: str) -> str:
+        texto = texto.lower().strip()
+        texto = unicodedata.normalize("NFD", texto)
+        texto = texto.encode("ascii", "ignore").decode("utf-8")
+        return texto
 
     def fetch_cumplimiento(self, id_estudiante: str, programa: str):
         """Llama a la API de cumplimiento académico."""
@@ -28,10 +34,7 @@ class CreditosService:
             if resp.status_code != 200:
                 return {"error": True, "message": f"No se pudo obtener cumplimiento académico. Status: {resp.status_code}, Response: {resp.text}"}
 
-            try:
-                data = resp.json()
-            except ValueError:
-                return {"error": True, "message": "Respuesta inválida de API de cumplimiento"}
+            data = resp.json()
 
             return {
                 "error": False,
@@ -42,33 +45,10 @@ class CreditosService:
 
         except requests.RequestException as e:
             return {"error": True, "message": f"Error en solicitud HTTP: {str(e)}"}
-
-    def normalizar_cursadas(self, data):
-        materias = []
-        for m in data:
-            materias.append({
-                "curso": m.get("CURSO"),
-                "nombre": m.get("NOMBRE_CURSO"),
-                "creditosCurso": int(m["CRED_CURSO"]) if m.get("CRED_CURSO") else 0,
-                "area": m.get("AREA_DESC"),
-                "semestre": m.get("SEMESTRE"),
-                "periodoTerminado": m.get("SEM_TERMINADO"),
-            })
-        return materias
-
-    def normalizar_listado_simple(self, data):
-        materias = []
-        for m in data:
-            materias.append({
-                "curso": m.get("CURSO"),
-                "nombre": m.get("NOMBRE_CURSO"),
-                "creditosCurso": int(m["CRED_CURSO"]) if m.get("CRED_CURSO") else 0,
-                "area": m.get("AREA_DESC"),
-                "semestre": m.get("SEMESTRE"),
-            })
-        return materias
+        
 
     def _obtener_cumplimiento_base(self, id_estudiante: str):
+        
         cursos_service = CursosService()
         info_cursos = cursos_service.fetch_cursos(id_estudiante)
 
@@ -92,10 +72,39 @@ class CreditosService:
 
         return {
             "error": False,
-            "cursadas": self.normalizar_cursadas(raw["cursadas"]),
-            "perdidas": self.normalizar_listado_simple(raw["perdidas"]),
-            "pendientes": self.normalizar_listado_simple(raw["pendientes"]),
+            "cursadas": raw.get("cursadas", []),
+            "perdidas": raw.get("perdidas", []),
+            "pendientes": raw.get("pendientes", []),
         }
+
+    def normalizar_cursadas(self, data):
+        return [
+            {
+                "materia": m.get("NOMBRE_CURSO"),
+                "creditos": int(m.get("CRED_CURSO", 0)),
+                "sem_terminado": m.get("SEM_TERMINADO"),
+            }
+            for m in data
+        ]
+    
+    def normalizar_perdidas(self, data):
+        return [
+            {
+                "materia": m.get("NOMBRE_CURSO"),
+                "creditos": int(m.get("CRED_CURSO", 0)),
+                "nota": m.get("NOTA_CURSO"),
+                "periodo": m.get("PERIODO"),
+            }
+            for m in data
+        ]
+
+    def normalizar_pendientes(self, data):
+        return [
+            {
+                "materia": m.get("NOMBRE_CURSO")
+            }
+            for m in data
+        ]
 
     def obtener_resumen_creditos(self, id_estudiante: str):
         """
@@ -108,23 +117,46 @@ class CreditosService:
 
         return {
             "error": False,
-            "aprobados": sum(m["creditosCurso"] for m in data["cursadas"]),
-            "perdidos": sum(m["creditosCurso"] for m in data["perdidas"]),
-            "pendientes": sum(m["creditosCurso"] for m in data["pendientes"]),
+            "aprobados": sum(int(m.get("CRED_CURSO", 0)) for m in data["cursadas"]),
+            "perdidos": sum(int(m.get("CRED_CURSO", 0)) for m in data["perdidas"]),
+            "pendientes": sum(int(m.get("CRED_CURSO", 0)) for m in data["pendientes"]),
         }
 
-    def obtener_detalle_materias(self, id_estudiante: str):
-        """
-        Retorna el listado completo de materias por estado.
-        """
+    def obtener_materias_por_estado(self, id_estudiante: str):
+
+        data = self._obtener_cumplimiento_base(id_estudiante)
+
+        if not data:
+            return {"error": "No se obtuvo respuesta de la API"}
+
+        if isinstance(data, dict) and data.get("error"):
+            return data
+
+        return {
+            "error": False,
+            "cursadas": self.normalizar_cursadas(data["cursadas"]),
+            "perdidas": self.normalizar_perdidas(data["perdidas"]),
+            "pendientes": self.normalizar_pendientes(data["pendientes"]),
+        }
+
+    def buscar_creditos_materia(self, id_estudiante: str, nombre_materia: str):
+
         data = self._obtener_cumplimiento_base(id_estudiante)
 
         if data.get("error"):
             return data
 
-        return {
-            "error": False,
-            "cursadas": data["cursadas"],
-            "perdidas": data["perdidas"],
-            "pendientes": data["pendientes"],
-        }
+        nombre_materia = self.normalizar_texto(nombre_materia)
+
+        for grupo in ["cursadas", "perdidas", "pendientes"]:
+            for m in data[grupo]:
+                nombre_api = self.normalizar_texto(m.get("NOMBRE_CURSO", ""))
+
+                if nombre_materia in nombre_api:
+                    return {
+                        "error": False,
+                        "materia": m.get("NOMBRE_CURSO"),
+                        "creditos": int(m.get("CRED_CURSO", 0))
+                    }
+
+        return {"error": True, "message": "No se encontró la materia"}

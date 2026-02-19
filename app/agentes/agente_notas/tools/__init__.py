@@ -1,7 +1,8 @@
-from .CalificacionesTools import consultar_notas
-from .CreditosTools import consultar_creditos, consultar_materias_por_estado
-from .CursosTools import consultar_cursos, consultar_informacion_estudiante
-from .HistorialTools import consultar_historial
+from .CalificacionesTools import nota_parcial_materia, nota_examen_materia
+from .CreditosTools import consultar_creditos, materias_perdidas, materias_pendientes, materias_cursadas,creditos_materia
+from .CursosTools import consultar_cursos, consultar_informacion_estudiante, fechas_materia
+from .HistorialTools import nota_materia, semestre_materia, veces_cursada_materia
+from .PromedioTools import promedio_estudiante
 
 from .context import (
     reset_context,
@@ -14,12 +15,20 @@ from .context import (
 )
 
 __all__ = [
-    'consultar_notas',
+    'nota_parcial_materia',
+    'nota_examen_materia',
+    'fechas_materia',
     'consultar_creditos',
-    'consultar_materias_por_estado',
+    'materias_perdidas',
+    'materias_pendientes',
+    'materias_cursadas',
     'consultar_cursos',
+    'creditos_materia',
     'consultar_informacion_estudiante',
-    'consultar_historial',
+    'nota_materia',
+    'semestre_materia',
+    'veces_cursada_materia',
+    'promedio_estudiante',
     'reset_context',
     'set_id_estudiante',
     'set_programa',

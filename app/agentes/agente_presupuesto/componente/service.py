@@ -11,7 +11,7 @@ class ComponenteService:
     def listar_componentes(self):
         try:
             resp = requests.get(
-                f"{API_PRESUPUESTO}/componentes",
+                f"{API_PRESUPUESTO}/componente",
                 timeout=10
             )
             resp.raise_for_status()
@@ -22,7 +22,7 @@ class ComponenteService:
     def obtener_componente(self, id: int):
         try:
             resp = requests.get(
-                f"{API_PRESUPUESTO}/componentes/{id}",
+                f"{API_PRESUPUESTO}/componente/{id}",
                 timeout=10
             )
             resp.raise_for_status()
@@ -38,7 +38,7 @@ class ComponenteService:
             }
 
             resp = requests.post(
-                f"{API_PRESUPUESTO}/componentes",
+                f"{API_PRESUPUESTO}/componente",
                 json=payload,
                 timeout=10
             )
@@ -66,7 +66,7 @@ class ComponenteService:
                 }
 
             resp = requests.put(
-                f"{API_PRESUPUESTO}/componentes/{id}",
+                f"{API_PRESUPUESTO}/componente/{id}",
                 json=payload,
                 timeout=10
             )
@@ -79,7 +79,7 @@ class ComponenteService:
     def eliminar_componente(self, id: int):
         try:
             resp = requests.delete(
-                f"{API_PRESUPUESTO}/componentes/{id}",
+                f"{API_PRESUPUESTO}/componente/{id}",
                 timeout=10
             )
             resp.raise_for_status()
